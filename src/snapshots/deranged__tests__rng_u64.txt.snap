@@ -1,0 +1,5 @@
+---
+source: src/lib.rs
+expression: "hex::encode(rng.next_u64().to_be_bytes())"
+---
+0000000000000001

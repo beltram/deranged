@@ -1,0 +1,11 @@
+[package]
+name = "deranged"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rand = { version = "0.8", default-features = false }
+
+[dev-dependencies]
+insta = { version = "1", default-features = false }
+hex = { version = "0.4", default-features = false, features = ["alloc"] }
