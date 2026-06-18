@@ -2,6 +2,12 @@
 name = "dernged"
 version = "0.1.0"
 edition = "2024"
+description = "Deterministic random number generator"
+authors = ["Beltram Maldant"]
+keywords = ["random", "rng"]
+license = "Apache-2.0"
+
+include = ["/src/*", "/Cargo.toml"]
 
 [dependencies]
 rand = { version = "0.8", default-features = false }
