@@ -1,28 +1,27 @@
+use core::convert::Infallible;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 /// Deterministic RNG for snapshot tests
 #[derive(Default, Debug)]
 pub struct Rng(AtomicU64);
 
-impl rand::CryptoRng for Rng {}
+impl rand_core::TryCryptoRng for Rng {}
 
-impl rand::RngCore for Rng {
-    fn next_u32(&mut self) -> u32 {
-        self.0.fetch_add(1, Ordering::SeqCst) as u32
+impl rand_core::TryRng for Rng {
+    type Error = Infallible;
+
+    fn try_next_u32(&mut self) -> Result<u32, Infallible> {
+        Ok(self.0.fetch_add(1, Ordering::SeqCst) as u32)
     }
 
-    fn next_u64(&mut self) -> u64 {
-        self.0.fetch_add(1, Ordering::SeqCst)
+    fn try_next_u64(&mut self) -> Result<u64, Infallible> {
+        Ok(self.0.fetch_add(1, Ordering::SeqCst))
     }
 
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Infallible> {
         for item in dest {
-            *item = (self.next_u32() % u8::MAX as u32) as u8;
+            *item = (self.0.fetch_add(1, Ordering::SeqCst) as u32 % u8::MAX as u32) as u8;
         }
-    }
-
-    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error> {
-        self.fill_bytes(dest);
         Ok(())
     }
 }
@@ -30,7 +29,7 @@ impl rand::RngCore for Rng {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::RngCore as _;
+    use rand_core::Rng as _;
 
     #[test]
     fn should_be_deterministic() {
